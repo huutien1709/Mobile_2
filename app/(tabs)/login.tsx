@@ -1,87 +1,150 @@
-
+// LoginScreen.js
+import { Link } from "expo-router";
 import React, { useState } from "react";
-import { View, Image, StyleSheet, Text, SafeAreaView, TextInput, Button, Alert } from "react-native";
-import { Link } from 'expo-router';
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { loginUser } from "./../api/auth"; // Import login function
 
-const [titleText, setTitleText] = useState("Đăng nhập");
-const bodyText = "Nhập tài khoản và mật khẩu của bạn.";
+export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState(""); // Success message
+  const [error, setError] = useState(""); // Error message
 
-const onPressTitle = () => {
-  setTitleText("Bird's Nest [pressed]");
-};
-const TextInputExample = () => {
-  const [text, onChangeText] = React.useState('');
-  const [number, onChangeNumber] = React.useState('');
+  // Handle login
+  const handleLogin = async () => {
+    if (email && password) {
+      try {
+        const data = await loginUser(email, password); // Call login function
+        setMessage(data.message); // Set success message
+        setError(""); // Clear error message
+      } catch {
+        setMessage(""); // Clear success message on error
+        setError("Đăng nhập không thành công!"); // Set error message
+      }
+    } else {
+      setError("Vui lòng điền đầy đủ thông tin!"); // Error for missing fields
+    }
+  };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <Image
-        style={styles.tinyLogo}
-        source={{
-          uri: "https://png.pngtree.com/png-clipart/20230813/original/pngtree-account-sign-business-web-vector-picture-image_10502730.png",
-        }}
+        source={require("@/assets/images/profile.png")}
+        style={styles.logo}
       />
-      <Text style={styles.baseText}>
-        <Text style={styles.titleText} onPress={onPressTitle}>
-          {titleText}
-        </Text>
-        <Text numberOfLines={5}>{bodyText}</Text>
-      </Text>
-      <SafeAreaView>
+      <Text style={styles.title}>Đăng Nhập</Text>
+
       <TextInput
         style={styles.input}
-        onChangeText={onChangeText}
-        value={text}
-        placeholder="Nhập tài khoản"
-        keyboardType="numeric"
+        placeholder="Email"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+        placeholderTextColor="#aaa"
       />
+
       <TextInput
         style={styles.input}
-        onChangeText={onChangeNumber}
-        value={number}
-        placeholder="Nhập mật khẩu"
-        keyboardType="numeric"
+        placeholder="Mật khẩu"
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+        placeholderTextColor="#aaa"
       />
-    </SafeAreaView>
-    <Link href='./'><Button title="Đăng nhập" onPress={() => {}} /></Link>
-    </View>
-    
+
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Đăng nhập</Text>
+      </TouchableOpacity>
+
+      {/* Display messages if any */}
+      {message && <Text style={styles.message}>{message}</Text>}
+      {error && <Text style={styles.errorMessage}>{error}</Text>}
+
+      {/* Navigate to registration screen */}
+      <TouchableOpacity style={styles.loginRedirect}>
+        <Link href="./signup">
+          <Text style={styles.loginText}>Bạn chưa có tài khoản? Đăng ký</Text>
+        </Link>
+      </TouchableOpacity>
+    </KeyboardAvoidingView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
   container: {
-    padding: 50,
-    alignItems: "center",
+    flex: 1,
     justifyContent: "center",
-  },
-  tinyLogo: {
-    width: 200,
-    height: 200,
+    paddingHorizontal: 24,
+    backgroundColor: "#ffeef8", // Light cherry blossom pink
   },
   logo: {
-    width: 66,
-    height: 58,
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+    marginBottom: 20,
   },
-  baseText: {
-    fontFamily: "Cochin",
+  title: {
+    fontSize: 28,
+    fontWeight: "600",
     textAlign: "center",
-    
+    marginBottom: 24,
+    color: "#d5006d", // Cherry blossom pink
   },
-  
-  titleText: {
-    fontSize: 20,
-    fontWeight: "bold",
+  input: {
+    height: 50,
+    borderColor: "#f1a7b4", // Slightly darker pink
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: "#fff",
+    fontSize: 16,
+    color: "#333",
+  },
+  button: {
+    height: 50,
+    backgroundColor: "#d5006d", // Cherry blossom pink
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  message: {
+    fontSize: 16,
+    color: "green",
     textAlign: "center",
-    margin: 50,
+    marginBottom: 16,
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: "red",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  loginRedirect: {
+    alignItems: "center",
+    marginTop: 20,
+  },
+  loginText: {
+    color: "#d5006d", // Cherry blossom pink
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
-
-export default TextInputExample;

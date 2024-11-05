@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import Slider from "../screens/Slider";
+import Product from "../screens/Product";
+import Category from "../screens/Category";
 import {
   Image,
   StyleSheet,
@@ -8,23 +11,11 @@ import {
   View,
   Dimensions,
 } from "react-native";
-import Swiper from "react-native-swiper";
 import { ThemedText } from "@/components/ThemedText";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Link } from "expo-router";
 
 const { width: windowWidth } = Dimensions.get("window");
-
-type SliderImage = {
-  id: number;
-  source: any;
-};
-
-const sliderImages: SliderImage[] = [
-  { id: 1, source: require("@/assets/images/slide3.jpg") },
-  { id: 2, source: require("@/assets/images/slide4.jpg") },
-  { id: 3, source: require("@/assets/images/slide5.webp") },
-];
 
 const products = [
   {
@@ -60,10 +51,6 @@ const categories = [
 const HomeScreen: React.FC = () => {
   const [activeSlide, setActiveSlide] = useState(0);
 
-  const handleCategoryPress = (categoryName: string) => {
-    console.log(`Selected category: ${categoryName}`);
-  };
-
   const handleCartPress = () => {
     console.log("Cart icon pressed");
   };
@@ -75,9 +62,11 @@ const HomeScreen: React.FC = () => {
           source={require("@/assets/images/favicon.png")}
           style={styles.logo}
         />
-        <TextInput style={styles.searchInput} placeholder="Tìm kiếm . . . " />
+         <Link href="/(tabs)/search">
+         <TextInput style={styles.searchInput} placeholder="Sản phẩm cần tìm. . . " />
+          </Link>
         <TouchableOpacity style={styles.searchButton}>
-          <ThemedText type="default">Search</ThemedText>
+          <ThemedText type="default">Tìm kiếm</ThemedText>
         </TouchableOpacity>
         <TouchableOpacity style={styles.cartButton} onPress={handleCartPress}>
           <Link href="../cart">
@@ -86,63 +75,13 @@ const HomeScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.sliderContainer}>
-        <Swiper
-          autoplay
-          loop
-          showsPagination={true}
-          onIndexChanged={(index: number) => setActiveSlide(index)}
-        >
-          {sliderImages.map((image) => (
-            <Image
-              key={image.id}
-              source={image.source}
-              style={styles.sliderImage}
-              resizeMode="cover"
-            />
-          ))}
-        </Swiper>
+      <View>
+        <Slider />
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoriesContainer}
-      >
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category.id}
-            style={styles.categoryCard}
-            onPress={() => handleCategoryPress(category.name)}
-          >
-            <ThemedText type="title" style={styles.categoryText}>
-              {category.name}
-            </ThemedText>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <Category />
 
-      <ThemedText type="title" style={styles.title}>
-        Sản phẩm nổi bật
-      </ThemedText>
-
-      <View style={styles.productsContainer}>
-        {products.map((product) => (
-          <View key={product.id} style={styles.productCard}>
-            <Link href="../productdetail">
-              <Image source={product.image} style={styles.productImage} />
-            </Link>
-            <Link href="../productdetail">
-              <ThemedText type="title" style={styles.productName}>
-                {product.name}
-              </ThemedText>
-            </Link>
-            <TouchableOpacity style={styles.addButton}>
-              <ThemedText type="default">Add to Cart</ThemedText>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
+      <Product />
     </ScrollView>
   );
 };
@@ -151,7 +90,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#FFF",
+    backgroundColor: "#ffeef8", // Light cherry blossom pink
   },
   searchContainer: {
     flexDirection: "row",
@@ -165,14 +104,14 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    borderColor: "#ccc",
+    borderColor: "#f1a7b4", // Slightly darker pink
     borderWidth: 1,
     borderRadius: 4,
     padding: 8,
   },
   searchButton: {
     marginLeft: 8,
-    backgroundColor: "#FF4081",
+    backgroundColor: "#d5006d", // Cherry blossom pink
     padding: 10,
     borderRadius: 4,
   },
@@ -240,7 +179,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginTop: 8,
-    backgroundColor: "#FF4081",
+    backgroundColor: "#d5006d", // Cherry blossom pink
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 4,
